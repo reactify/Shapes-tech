@@ -1,0 +1,131 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>CTRL WEB</title>
+    <!-- <link rel="stylesheet" href="http://reactifymusic.com/CTRL/default.css" type="text/css" /> -->
+    <link type="text/css" rel="stylesheet" href="default.css" />
+    <script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="./socket.io/socket.io.js"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script>
+      var clientName;
+      var peerName;
+      var totalButtonCount = 4;
+
+      // var socket = io.connect('10.47.8.81:8081');
+      var socket = io.connect('yuli-mbp.lan:8081');
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+      });
+
+      socket.on('log', function (label, data) {
+        console.log(label);
+        console.log(data);
+      });
+
+      // on connection to server, ask for user's name with an anonymous callback
+      socket.on('connect', function(){
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        clientName = prompt("What's your name?");
+        socket.emit('adduser', clientName);
+      });
+
+      socket.on('peerButtonPressed', function(button) {
+        $('#btn'+button).css({"backgroundColor": "grey"});
+      })
+
+      socket.on('peerButtonReleased', function(button) {
+        $('#btn'+button).css({"backgroundColor": origColours[button]});
+      })
+
+      socket.on('assignButtons', function(users) {
+        for (var i=0; i < totalButtonCount; i++) {
+          var buttonToDisable = "#btn"+i;
+          $(buttonToDisable).unbind();
+
+          $(buttonToDisable).css({"opacity": "0.5"});
+        }
+
+        for (var i=0; i < users.length; i++) {
+          if (users[i].userName == clientName) {
+            enableButtons(users[i].assignedButtons);
+            labelButtons(users[i].userName, users[i].assignedButtons);
+          }else{
+            labelButtons(users[i].userName, users[i].assignedButtons);
+          }
+        }
+        // console.log('Users = ' + users[0].userName);
+        // enableButtons
+      })
+
+      function labelButtons (name, buttonsToLabel) {
+        for (var i=0; i < buttonsToLabel.length; i++) {
+          // console.log('Labelling button ' + buttonsToLabel[i] + ' with ' + name);
+          var buttonToLabel = "#btn"+buttonsToLabel[i];
+          $(buttonToLabel).text(name);
+        }
+      }
+
+      function enableButtons (enableButtons) {
+
+        for (var i=0; i < enableButtons.length; i++) {
+          // console.log('Enabling button ' + enableButtons[i]);
+          var buttonToEnable = "#btn"+enableButtons[i];
+
+          $(buttonToEnable).css({"opacity": "1.0"});
+
+          $(buttonToEnable).bind('vmousedown', function(event) {
+            // alert('vmousedown triggered!');
+            $(this).css({"backgroundColor": "grey"});
+            event.preventDefault();
+
+            socket.emit('buttonPressed', $(this).attr('buttonIndex'));
+
+          })
+
+          $(buttonToEnable).bind('vmouseup', function(event) {
+            // alert('vmouseup triggered!');
+            $(this).css({"backgroundColor": origColours[$(this).attr('buttonIndex')]});
+            event.preventDefault();
+
+            socket.emit('buttonReleased', $(this).attr('buttonIndex'));
+
+          })
+        }
+      }
+
+      var origColours = ['red', 'green', 'blue', 'yellow'];
+      var tilt;
+
+      $(document).ready(function() {
+
+        window.addEventListener("devicemotion", function(event) {
+          tilt = [  (event.accelerationIncludingGravity.x/10), 
+                    (event.accelerationIncludingGravity.y/10),
+                    (event.acceleration.z/10)];
+        }, true);
+
+        $(".btn").bind('taphold', function(event) {
+          event.preventDefault();
+        })
+      });
+       window.ondevicemotion = function() {
+          if (tilt) {
+            socket.emit('didAccelerate', tilt);
+          };
+       };
+
+    </script>
+    
+  </head>
+  <body>
+     <div id="btn0" class="btn" buttonIndex="0">Player 0</div>
+     <div id="btn1" class="btn" buttonIndex="1">Player 0</div>
+     <div id="btn2" class="btn" buttonIndex="2">Player 0</div>
+     <div id="btn3" class="btn" buttonIndex="3">Player 0</div>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+
+HTML { 
+	background: black; 
+	color: #000;
+	font-family: Verdana, Helvetica, Arial, Tahoma, sans-serif;
+	font-size: 8pt;
+} 
+
+BODY{ 
+	font-family: Verdana, Helvetica, Arial, Tahoma, sans-serif;
+	font-size: 8pt;
+  -webkit-touch-callout: none !important;
+} 
+
+#gameScreen {
+  width:100%;
+}
+
+a { 
+	text-decoration: none; 
+/*	background: #FFFFFF;  */
+	color: #b00; 
+  -webkit-user-select: none !important;
+} 
+
+a:hover { 
+  text-decoration: none; 
+/*  background: #FFFFFF;  */
+  color: #b00; 
+  -webkit-user-select: none !important;
+} 
+
+a:visited { 
+  text-decoration: none; 
+/*  background: #FFFFFF;  */
+  color: #b00; 
+  -webkit-user-select: none !important;
+}
+
+a:active { 
+  text-decoration: none; 
+/*  background: #FFFFFF;  */
+  color: #b00; 
+  -webkit-user-select: none !important;
+}
+
+.btn {
+  width:42%;
+  height:42%;
+  background-color: red;
+  float:left;
+  margin:1%;
+  color:black;
+  font-weight: bold;
+  opacity: 0.5;
+  border-style: solid;
+  border-width: 7px;
+}
+
+#btn0 {
+  background-color: red;
+  border-color: red;
+}
+#btn1 {
+  background-color: green;
+  border-color: green;
+}
+#btn2 {
+  background-color: blue;
+  border-color: blue;
+}
+#btn3 {
+  background-color: yellow;
+  border-color: yellow;
+}
+
+@media screen and (min-width:321px) {
+  HTML {
+    min-height: 821px;
+    background: gray;
+  }
+
+  #iPhoneWrapper {
+    margin-left: auto;
+    margin-right: auto;
+    background-image: url('img/iphone.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    width:379px;
+    height:748px;
+  }
+
+  #iPhoneShine {
+    background: transparent url('img/iphoneshine.png');
+    background-color: transparent;
+    width:319px;
+    height:481px;
+  }
+
+  #gameScreen {
+    width:314px;
+    height:482px;
+    margin-left:35px;
+    padding-top:135px;
+  }
+}

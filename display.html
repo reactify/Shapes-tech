@@ -1,0 +1,48 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>CTRL WEB</title>
+    <!-- <link rel="stylesheet" href="http://reactifymusic.com/CTRL/default.css" type="text/css" /> -->
+    <link type="text/css" rel="stylesheet" href="display.css" />
+    <script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="./socket.io/socket.io.js"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <script>
+      var clientName;
+      var peerName;
+      var totalButtonCount = 4;
+
+      var socket = io.connect('yuli-mbp.lan:8081');
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+      });
+
+      socket.on('log', function (label, data) {
+        console.log(label);
+        console.log(data);
+      });
+
+      // on connection to server, ask for user's name with an anonymous callback
+      socket.on('connect', function(){
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        socket.emit('registerAsDisplay', 1);
+      });
+
+      socket.on('userCountUpdated', function(count) {
+        if (count == 1) {
+          $('#userCount').text(count + ' user connected');
+        }else{
+          $('#userCount').text(count + ' users connected');}
+      });
+    </script>
+    
+  </head>
+  <body>
+    <div id="title">CTRL</div>
+    <div id="userCount">0 users connected</div>
+  </body>
+</html>
