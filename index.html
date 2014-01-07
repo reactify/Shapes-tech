@@ -42,6 +42,21 @@
         $('#btn'+button).css({"backgroundColor": origColours[button]});
       })
 
+      socket.on('timeoutButton', function(timeoutButton) {
+        // When the button is pressed, unbind it from its press actions, fade it out and fade it back in again slowly
+        $('#btn'+timeoutButton).unbind('vmousedown');;
+        $('#btn'+timeoutButton).css({"color": "black"});
+        $('#btn'+timeoutButton).fadeTo(0, 0, function() {
+          $('#btn'+timeoutButton).fadeTo(5000, 1, function() {
+            // When the fade back in is complete, rebind it to the button press actions
+            console.log('Rebinding');
+            $('#btn'+timeoutButton).css({"color": "white"});
+            bindButtonToActions('#btn'+timeoutButton);
+          });
+        });
+        console.log('Timing out '+timeoutButton);
+      })
+
       socket.on('assignButtons', function(users) {
         for (var i=0; i < totalButtonCount; i++) {
           var buttonToDisable = "#btn"+i;
@@ -71,32 +86,31 @@
       }
 
       function enableButtons (enableButtons) {
-
         for (var i=0; i < enableButtons.length; i++) {
           // console.log('Enabling button ' + enableButtons[i]);
           var buttonToEnable = "#btn"+enableButtons[i];
-
           $(buttonToEnable).css({"opacity": "1.0"});
-
-          $(buttonToEnable).bind('vmousedown', function(event) {
-            // alert('vmousedown triggered!');
-            $(this).css({"backgroundColor": "grey"});
-            event.preventDefault();
-
-            socket.emit('buttonPressed', $(this).attr('buttonIndex'));
-
-          })
-
-          $(buttonToEnable).bind('vmouseup', function(event) {
-            // alert('vmouseup triggered!');
-            $(this).css({"backgroundColor": origColours[$(this).attr('buttonIndex')]});
-            event.preventDefault();
-
-            socket.emit('buttonReleased', $(this).attr('buttonIndex'));
-
-          })
+          bindButtonToActions(buttonToEnable);
         }
       }
+
+      function bindButtonToActions(buttonToBind) {
+        $(buttonToBind).bind('vmousedown', sendButtonReleasedToServer);
+        $(buttonToBind).bind('vmouseup', sendButtonPressedToServer); 
+      }
+
+      function sendButtonPressedToServer() {
+        $(this).css({"backgroundColor": origColours[$(this).attr('buttonIndex')]});
+        event.preventDefault();
+        socket.emit('buttonReleased', $(this).attr('buttonIndex'));
+      }
+
+      function sendButtonReleasedToServer() {
+        $(this).css({"backgroundColor": "grey"});
+        event.preventDefault();
+        socket.emit('buttonPressed', $(this).attr('buttonIndex'));
+      }
+
 
       var origColours = ['red', 'green', 'blue', 'yellow'];
       var tilt;

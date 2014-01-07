@@ -139,12 +139,12 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('buttonPressed', function(buttonIndex) {
-
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
         console.log(usernames2[i].userName + ' pressed = ' + buttonIndex);
         sendOSC(sendOSC(i + "/button" + buttonIndex, 1));
         io.sockets.emit('peerButtonPressed', buttonIndex);
+        io.sockets.emit('timeoutButton', buttonIndex);
       }
     }
   });
