@@ -1,0 +1,18 @@
+{
+  "1": {
+  	"name": "bleeps1",
+  	"time-limit": "10"
+  },
+  "2": {
+  	"name": "bleeps2",
+  	"time-limit": "20"
+  },
+  "3": {
+  	"name": "swells1",
+  	"time-limit": "30"
+  },
+  "4": {
+  	"name": "swells2",
+  	"time-limit": "40"
+  }
+}

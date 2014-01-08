@@ -3,8 +3,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Shapes</title>
     <!-- <link rel="stylesheet" href="http://reactifymusic.com/CTRL/default.css" type="text/css" /> -->
-    <link type="text/css" rel="stylesheet" href="default.css" />
-    <script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="css/default.css" />
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <script src="./socket.io/socket.io.js"></script>
@@ -14,11 +14,16 @@
       var clientName;
       var peerName;
       var totalButtonCount = 4;
+      var sec = 0;
+      var interactionLevel = 0;
+      var progressbar
+      var incrementUnwrappedSeconds = 1;
+      var secondsUnwrapped = 0;
 
       // var socket = io.connect('10.47.8.81:8081');
       var socket = io.connect('http://localhost:8081');
       socket.on('news', function (data) {
-        console.log(data);
+        // console.log(data);
         socket.emit('my other event', { my: 'data' });
       });
 
@@ -77,6 +82,15 @@
         // enableButtons
       })
 
+      socket.on('updateLevel', function(level, name, timeLimit) {
+        interactionLevel = level;
+        $('#interactionLevelName').html(name);
+        secondsUnwrapped = 0;
+        progressbar.attr('value', '0');
+        progressbar.attr('max',timeLimit);
+        incrementUnwrappedSeconds = 1;
+      })
+
       function labelButtons (name, buttonsToLabel) {
         for (var i=0; i < buttonsToLabel.length; i++) {
           // console.log('Labelling button ' + buttonsToLabel[i] + ' with ' + name);
@@ -126,20 +140,50 @@
         $(".btn").bind('taphold', function(event) {
           event.preventDefault();
         })
-      });
-       window.ondevicemotion = function() {
-          if (tilt) {
-            socket.emit('didAccelerate', tilt);
-          };
-       };
 
+        sec = 0;
+        function pad ( val ) { return val > 9 ? val : "0" + val; }
+        setInterval( function(){
+          var secondsWrapped = pad(++sec%60);
+          secondsUnwrapped = ++secondsUnwrapped;
+          var minutes = pad(parseInt(sec/60,10));
+          $("#elapsedTime").html(minutes+":"+secondsWrapped);
+          if (incrementUnwrappedSeconds) {
+            $("#elapsedSeconds").html(secondsUnwrapped);
+            loading();
+          }
+        }, 1000);
+
+        // Progress bar
+        progressbar = $('#progressbar');  
+  
+        var loading = function() {  
+            addValue = progressbar.val(secondsUnwrapped);
+            if (secondsUnwrapped == progressbar.attr('max')) { 
+              // tell server we've finished this level and request a new one
+              console.log('Reached max');
+              socket.emit('getNewLevel', clientName, interactionLevel); 
+              incrementUnwrappedSeconds = 0;
+            }
+        };
+      });
+      window.ondevicemotion = function() {
+        if (tilt) {
+          socket.emit('didAccelerate', tilt);
+        };
+      };
     </script>
-    
   </head>
   <body>
-     <div id="btn0" class="btn" buttonIndex="0">Player 0</div>
-     <div id="btn1" class="btn" buttonIndex="1">Player 0</div>
-     <div id="btn2" class="btn" buttonIndex="2">Player 0</div>
-     <div id="btn3" class="btn" buttonIndex="3">Player 0</div>
+    <div id="stats">0 others connected</div>
+    <div id="elapsedTime">00:00</div>
+    <div id="elapsedSeconds">0</div>
+    <div id="interactionLevelName"></div>
+    <progress id="progressbar" value="0" max="5"></progress>
+    </br>
+    <div id="btn0" class="btn" buttonIndex="0">Player 0</div>
+    <div id="btn1" class="btn" buttonIndex="1">Player 0</div>
+    <div id="btn2" class="btn" buttonIndex="2">Player 0</div>
+    <div id="btn3" class="btn" buttonIndex="3">Player 0</div>
   </body>
 </html>

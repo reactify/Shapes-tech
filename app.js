@@ -4,11 +4,13 @@ var http = require('http'),
     osc = require('osc-min'),
     dgram = require('dgram'),
     path = require('path'),
-    udp = dgram.createSocket('udp4');
+    udp = dgram.createSocket('udp4'),
+    levels = require('./js/levels');
 
 var outport = 41234;
 
-console.log('blagagag');
+console.log('Starting...');
+console.log(levels["1"]);
 
 var file = new(static.Server)();
 
@@ -74,7 +76,7 @@ function addUser(name, assignedButtons, date) {
   this.userName = name;
   this.assignedButtons = assignedButtons;
   this.date = date;
-  // to-do - add connection timestamp info to a user
+  this.currentLevel = 0;
 }
 
 io.sockets.on('connection', function (socket) {
@@ -167,7 +169,18 @@ io.sockets.on('connection', function (socket) {
       }
     }
   });
-  
+
+  socket.on('getNewLevel', function(username, currentLevel){
+    console.log('Getting new level for client');
+    requestingClient = socket.id;
+
+    var newLevelNumber = currentLevel+1;
+    var newLevelName = levels[newLevelNumber]["name"];
+    var newLevelTimeLimit = levels[newLevelNumber]["time-limit"];
+
+    io.sockets.socket(requestingClient).emit('updateLevel', newLevelNumber, newLevelName, newLevelTimeLimit);
+  })
+
   // when the user disconnects.. perform this
   // TO-DO // TIDY THIS UP. LOTS OF IDENTICAL/REDUNTANT CALLS TO .connect ABOVE
   socket.on('disconnect', function(){

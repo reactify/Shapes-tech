@@ -57,12 +57,12 @@ a:active {
   border-width: 7px;
 }
 #stats {
-  float:left;
+  /*float:left;*/
 }
-/*
-#connectedTime {
-  float:right;
-}*/
+
+#elapsedTime {
+  /*float:right;*/
+}
 
 #btn0 {
   background-color: red;
