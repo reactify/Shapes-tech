@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>CTRL WEB</title>
+    <title>Shapes</title>
     <!-- <link rel="stylesheet" href="http://reactifymusic.com/CTRL/default.css" type="text/css" /> -->
     <link type="text/css" rel="stylesheet" href="display.css" />
     <script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
@@ -15,7 +15,7 @@
       var peerName;
       var totalButtonCount = 4;
 
-      var socket = io.connect('yuli-mbp.lan:8081');
+      var socket = io.connect('http://localhost:8081');
       socket.on('news', function (data) {
         console.log(data);
         socket.emit('my other event', { my: 'data' });
@@ -36,13 +36,24 @@
         if (count == 1) {
           $('#userCount').text(count + ' user connected');
         }else{
-          $('#userCount').text(count + ' users connected');}
+          $('#userCount').text(count + ' users connected');
+        }
+      });
+
+      socket.on('allUsers', function(info) {
+        $('#connectedUsers').empty();
+        var usersCount = Object.keys(info).length;
+        for(var i=0; i<usersCount; i++) {
+          console.log(info[i].userName);
+          $('#connectedUsers').append('</p><b>'+info[i].userName+'</b> - '+info[i].date+' - Buttons: '+info[i].assignedButtons+'</p>');
+        }
       });
     </script>
     
   </head>
   <body>
-    <div id="title">CTRL</div>
+    <div id="title">Shapes</div>
     <div id="userCount">0 users connected</div>
+    <div id="connectedUsers">Connected users</div>
   </body>
 </html>

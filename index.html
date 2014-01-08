@@ -1,7 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>CTRL WEB</title>
+    <title>Shapes</title>
     <!-- <link rel="stylesheet" href="http://reactifymusic.com/CTRL/default.css" type="text/css" /> -->
     <link type="text/css" rel="stylesheet" href="default.css" />
     <script src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
@@ -16,7 +16,7 @@
       var totalButtonCount = 4;
 
       // var socket = io.connect('10.47.8.81:8081');
-      var socket = io.connect('yuli-mbp.lan:8081');
+      var socket = io.connect('http://localhost:8081');
       socket.on('news', function (data) {
         console.log(data);
         socket.emit('my other event', { my: 'data' });

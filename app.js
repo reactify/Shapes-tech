@@ -70,9 +70,11 @@ function sortButtons (count) {
   }
 }
 
-function addUser(name, assignedButtons) {
+function addUser(name, assignedButtons, date) {
   this.userName = name;
   this.assignedButtons = assignedButtons;
+  this.date = date;
+  // to-do - add connection timestamp info to a user
 }
 
 io.sockets.on('connection', function (socket) {
@@ -84,8 +86,11 @@ io.sockets.on('connection', function (socket) {
     // we store the username in the socket session for this client
     socket.username = username;
 
+    //get current date for timestamp
+    var currentDate = new Date();
+
     // set up a new user object and pre-populate it
-    var newUser = new addUser(username, [0, 1, 2, 3]);
+    var newUser = new addUser(username, [0, 1, 2, 3], currentDate);
 
     console.log('New user = ' + newUser.userName);
 
@@ -110,12 +115,16 @@ io.sockets.on('connection', function (socket) {
     // assign each connected user their buttons
     for (i=0; i < usersCount; i++) {
       usernames2[i].assignedButtons = sortedButtons[i];
-      console.log('assigning user ' + usernames2[i] + ' these buttons ' + sortedButtons[usersCount-1]);
+      // console.log('assigning user');
+      // console.log(usernames2[i].userName);
+      // console.log('these buttons');
+      // console.log(sortedButtons[usersCount-1]);
     }
 
     console.log(usernames2);
     
     io.sockets.socket(display).emit('userCountUpdated', usersCount);
+    io.sockets.socket(display).emit('allUsers', usernames2);
 
     // tell client to update its view
     io.sockets.emit('assignButtons', usernames2);
