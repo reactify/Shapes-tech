@@ -1,0 +1,12 @@
+#N canvas 867 203 294 156 10;
+#X obj 27 20 dumpOSC 41234;
+#X obj 27 44 OSCroute /button-on /button-off;
+#X obj 27 103 ctlout 0 14;
+#X msg 27 74 \$1 127;
+#X obj 118 103 ctlout 0 15;
+#X msg 118 74 \$1 0;
+#X connect 0 0 1 0;
+#X connect 1 0 3 0;
+#X connect 1 1 5 0;
+#X connect 3 0 2 0;
+#X connect 5 0 4 0;

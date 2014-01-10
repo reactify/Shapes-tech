@@ -5,12 +5,27 @@ var http = require('http'),
     dgram = require('dgram'),
     path = require('path'),
     udp = dgram.createSocket('udp4'),
-    levels = require('./js/levels');
+    levels = require('./js/levels'),
+    midi = require('midi');
 
 var outport = 41234;
 
 console.log('Starting...');
-console.log(levels["1"]);
+// console.log(levels["1"]);
+
+// Set up a new midi output.
+var midiOutput = new midi.output();
+
+// List the available midi output ports
+for (var p = 0; p < midiOutput.getPortCount(); p++) {
+  midiPortName = midiOutput.getPortName(p);
+  if (midiPortName.indexOf("IAC") != -1) {
+    console.log("Opening "+p+" - "+midiPortName);
+    midiOutput.openPort(p);
+  }else{
+    // console.log("Not opening "+p+" - "+midiPortName);
+  }
+}
 
 var file = new(static.Server)();
 
@@ -138,11 +153,17 @@ io.sockets.on('connection', function (socket) {
   })
 
   socket.on('didAccelerate', function(tilt) {
+    // console.log('Acceleration: '+tilt);
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
-        sendOSC(sendOSC(i + "/accelX", tilt[0]));
-        sendOSC(sendOSC(i + "/accelY", tilt[1]));
-        sendOSC(sendOSC(i + "/accelZ", tilt[2]));
+        // sendOSC(sendOSC(i + "/accelX", tilt[0]));
+        // sendOSC(sendOSC(i + "/accelY", tilt[1]));
+        // sendOSC(sendOSC(i + "/accelZ", tilt[2]));
+
+        //scale -1 - 1 to 0 - 127 for midi
+        var midiX = parseInt((tilt[0]+1)*64);
+        console.log("midiX = "+midiX);
+        midiOutput.sendMessage([189, 13, midiX]);
       }
     }
   });
@@ -151,9 +172,10 @@ io.sockets.on('connection', function (socket) {
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
         console.log(usernames2[i].userName + ' pressed = ' + buttonIndex);
-        sendOSC(sendOSC("button-on", parseInt(buttonIndex)));
+        // sendOSC(sendOSC("button-on", parseInt(buttonIndex)));
+        midiOutput.sendMessage([187, parseInt(buttonIndex), 127]);
         io.sockets.emit('peerButtonPressed', buttonIndex);
-        io.sockets.emit('timeoutButton', buttonIndex);
+        // io.sockets.emit('timeoutButton', buttonIndex);
       }
     }
   });
@@ -162,7 +184,8 @@ io.sockets.on('connection', function (socket) {
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
         console.log(usernames2[i].userName + ' released = ' + buttonIndex);
-        sendOSC(sendOSC("button-off", parseInt(buttonIndex)));
+        // sendOSC(sendOSC("button-off", parseInt(buttonIndex)));
+        midiOutput.sendMessage([188, parseInt(buttonIndex), 127]);
         io.sockets.emit('peerButtonReleased', buttonIndex);
       }
     }

@@ -19,6 +19,7 @@
       var progressbar
       var incrementUnwrappedSeconds = 1;
       var secondsUnwrapped = 0;
+      var sendAccelerometer = 0;
 
       var socket = io.connect('http://yuli-mbp.lan:8081');
       // var socket = io.connect('http://localhost:8081');
@@ -65,10 +66,9 @@
 
       socket.on('assignButtons', function(users) {
         for (var i=0; i < totalButtonCount; i++) {
-          var buttonToDisable = "#btn"+i;
-          $(buttonToDisable).unbind();
-
-          $(buttonToDisable).css({"opacity": "0.5"});
+          // var buttonToDisable = "#btn"+i;
+          // $(buttonToDisable).unbind();
+          // $(buttonToDisable).css({"opacity": "0.5"});
         }
 
         for (var i=0; i < users.length; i++) {
@@ -101,9 +101,17 @@
       }
 
       function enableButtons (enableButtons) {
-        for (var i=0; i < enableButtons.length; i++) {
+        // for (var i=0; i < enableButtons.length; i++) {
+        //   // console.log('Enabling button ' + enableButtons[i]);
+        //   var buttonToEnable = "#btn"+enableButtons[i];
+        //   $(buttonToEnable).css({"opacity": "1.0"});
+        //   bindButtonToActions(buttonToEnable);
+        // }
+
+        // hack to assign all buttons by default
+        for (var i=0; i < 16; i++) {
           // console.log('Enabling button ' + enableButtons[i]);
-          var buttonToEnable = "#btn"+enableButtons[i];
+          var buttonToEnable = "#btn"+i;
           $(buttonToEnable).css({"opacity": "1.0"});
           bindButtonToActions(buttonToEnable);
         }
@@ -112,6 +120,21 @@
       function bindButtonToActions(buttonToBind) {
         $(buttonToBind).bind('vmousedown', sendButtonReleasedToServer);
         $(buttonToBind).bind('vmouseup', sendButtonPressedToServer); 
+      }
+
+      function bindButtonToAccelerometer(buttonToBind) {
+        $(buttonToBind).bind('vmousedown', accelerometerToServerStart);
+        $(buttonToBind).bind('vmouseup', accelerometerToServerStop); 
+      }
+
+      function accelerometerToServerStart() {
+        console.log('sendAccel 1');
+        sendAccelerometer = 1;
+      }
+
+      function accelerometerToServerStop() {
+        console.log('sendAccel 0');
+        sendAccelerometer = 0;
       }
 
       function sendButtonPressedToServer() {
@@ -167,12 +190,27 @@
               incrementUnwrappedSeconds = 0;
             }
         };
+
+        bindButtonToAccelerometer("#btn15");
+
       });
       window.ondevicemotion = function() {
-        if (tilt) {
-          socket.emit('didAccelerate', tilt);
-        };
+        // if (tilt) {
+        //   if (sendAccelerometer == 1) {
+        //     socket.emit('didAccelerate', tilt);
+        //   }
+        // };
       };
+
+      setInterval( function(){
+        if (tilt) {
+          if (sendAccelerometer == 1) {
+            socket.emit('didAccelerate', tilt);
+          }
+        };
+      }, 15);
+
+
     </script>
   </head>
   <body>
