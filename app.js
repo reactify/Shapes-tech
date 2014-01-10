@@ -31,7 +31,7 @@ function sendOSC(oscAddress, state) {
       address: address,
       args: [state]
     })
-    // console.log(address);
+    // console.log(address, state);
     return udp.send(buf, 0, buf.length, outport, "localhost");
   };
 };
@@ -137,8 +137,6 @@ io.sockets.on('connection', function (socket) {
     display = socket.id;
   })
 
-
-
   socket.on('didAccelerate', function(tilt) {
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
@@ -153,7 +151,7 @@ io.sockets.on('connection', function (socket) {
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
         console.log(usernames2[i].userName + ' pressed = ' + buttonIndex);
-        sendOSC(sendOSC(i + "/button" + buttonIndex, 1));
+        sendOSC(sendOSC("button-on", parseInt(buttonIndex)));
         io.sockets.emit('peerButtonPressed', buttonIndex);
         io.sockets.emit('timeoutButton', buttonIndex);
       }
@@ -164,21 +162,25 @@ io.sockets.on('connection', function (socket) {
     for (var i=0; i<usersCount; i++) {
       if (usernames2[i].userName == socket.username) {
         console.log(usernames2[i].userName + ' released = ' + buttonIndex);
-        sendOSC(sendOSC(i + "/button" + buttonIndex, 0));
+        sendOSC(sendOSC("button-off", parseInt(buttonIndex)));
         io.sockets.emit('peerButtonReleased', buttonIndex);
       }
     }
   });
 
   socket.on('getNewLevel', function(username, currentLevel){
-    console.log('Getting new level for client');
-    requestingClient = socket.id;
+    if (currentLevel < 3){
+      console.log('Getting new level for client');
+      requestingClient = socket.id;
 
-    var newLevelNumber = currentLevel+1;
-    var newLevelName = levels[newLevelNumber]["name"];
-    var newLevelTimeLimit = levels[newLevelNumber]["time-limit"];
+      var newLevelNumber = currentLevel+1;
+      var newLevelName = levels[newLevelNumber]["name"];
+      var newLevelTimeLimit = levels[newLevelNumber]["time-limit"];
 
-    io.sockets.socket(requestingClient).emit('updateLevel', newLevelNumber, newLevelName, newLevelTimeLimit);
+      io.sockets.socket(requestingClient).emit('updateLevel', newLevelNumber, newLevelName, newLevelTimeLimit);
+    }else{
+      console.log('Already at the top level');
+    }
   })
 
   // when the user disconnects.. perform this

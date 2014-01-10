@@ -15,7 +15,8 @@
       var peerName;
       var totalButtonCount = 4;
 
-      var socket = io.connect('http://localhost:8081');
+      var socket = io.connect('http://yuli-mbp.lan:8081');
+      // var socket = io.connect('http://localhost:8081');
       socket.on('news', function (data) {
         console.log(data);
         socket.emit('my other event', { my: 'data' });

@@ -20,8 +20,8 @@
       var incrementUnwrappedSeconds = 1;
       var secondsUnwrapped = 0;
 
-      // var socket = io.connect('10.47.8.81:8081');
-      var socket = io.connect('http://localhost:8081');
+      var socket = io.connect('http://yuli-mbp.lan:8081');
+      // var socket = io.connect('http://localhost:8081');
       socket.on('news', function (data) {
         // console.log(data);
         socket.emit('my other event', { my: 'data' });
@@ -35,7 +35,8 @@
       // on connection to server, ask for user's name with an anonymous callback
       socket.on('connect', function(){
         // call the server-side function 'adduser' and send one parameter (value of prompt)
-        clientName = prompt("What's your name?");
+        // clientName = prompt("What's your name?");
+        clientName = Math.floor(Math.random()*1000,0);
         socket.emit('adduser', clientName);
       });
 
@@ -185,5 +186,17 @@
     <div id="btn1" class="btn" buttonIndex="1">Player 0</div>
     <div id="btn2" class="btn" buttonIndex="2">Player 0</div>
     <div id="btn3" class="btn" buttonIndex="3">Player 0</div>
+    <div id="btn4" class="btn" buttonIndex="4">Player 0</div>
+    <div id="btn5" class="btn" buttonIndex="5">Player 0</div>
+    <div id="btn6" class="btn" buttonIndex="6">Player 0</div>
+    <div id="btn7" class="btn" buttonIndex="7">Player 0</div>
+    <div id="btn8" class="btn" buttonIndex="8">Player 0</div>
+    <div id="btn9" class="btn" buttonIndex="9">Player 0</div>
+    <div id="btn10" class="btn" buttonIndex="10">Player 0</div>
+    <div id="btn11" class="btn" buttonIndex="11">Player 0</div>
+    <div id="btn12" class="btn" buttonIndex="12">Player 0</div>
+    <div id="btn13" class="btn" buttonIndex="13">Player 0</div>
+    <div id="btn14" class="btn" buttonIndex="14">Player 0</div>
+    <div id="btn15" class="btn" buttonIndex="15">Player 0</div>
   </body>
 </html>

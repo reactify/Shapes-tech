@@ -45,8 +45,8 @@ a:active {
 }
 
 .btn {
-  width:42%;
-  height:42%;
+  width:18%;
+  height:18%;
   background-color: red;
   float:left;
   margin:1%;
@@ -64,19 +64,19 @@ a:active {
   /*float:right;*/
 }
 
-#btn0 {
+#btn0, #btn4, #btn8, #btn12 {
   background-color: red;
   border-color: red;
 }
-#btn1 {
+#btn1, #btn5, #btn9, #btn13 {
   background-color: green;
   border-color: green;
 }
-#btn2 {
+#btn2, #btn6, #btn10, #btn14 {
   background-color: blue;
   border-color: blue;
 }
-#btn3 {
+#btn3, #btn7, #btn11, #btn15 {
   background-color: yellow;
   border-color: yellow;
 }
