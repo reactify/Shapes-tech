@@ -52,7 +52,14 @@ function sendOSC(oscAddress, state) {
 }
 
 sock = dgram.createSocket("udp4", function(msg, rinfo) {
-  console.log(msg, rinfo);
+  var oscIn = osc.fromBuffer(msg);
+  if (oscIn.address == "/beat") {
+    var oscInArgs = oscIn.args;
+    var oscInValue = oscInArgs[0].value;
+    console.log("Beat "+oscInValue);
+  }else{
+    console.log(oscIn.address);
+  }
 });
 
 sock.bind(9001);
