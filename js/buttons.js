@@ -29,21 +29,25 @@ clientName = Math.floor(Math.random()*1000,0);
 socket.emit('adduser', clientName);
 });
 
+socket.on('beat', function(beat) {
+  // console.log('Received beat '+beat);
+});
+
 socket.on('peerButtonPressed', function(button) {
 $('#btn'+button).css({"backgroundColor": "grey"});
-})
+});
 
 socket.on('peerButtonReleased', function(button) {
 $('#btn'+button).css({"backgroundColor": origColours[button]});
-})
+});
 
 socket.on('timeoutButton', function(timeoutButton) {
 // When the button is pressed, unbind it from its press actions, fade it out and fade it back in again slowly
-$('#btn'+timeoutButton).unbind('vmousedown');;
+$('#btn'+timeoutButton).unbind('vmousedown');
 $('#btn'+timeoutButton).css({"color": "black"});
 $('#btn'+timeoutButton).fadeTo(0, 0, function() {
-var fadeBackTo = 0.1;
-if (timeoutButton == assignedButton) { fadeBackTo = 1.0 }
+var fadeBackTo = 0.25;
+if (timeoutButton == assignedButton) {fadeBackTo = 1.0};
   $('#btn'+timeoutButton).fadeTo(5000, fadeBackTo, function() {
     // When the fade back in is complete, rebind it to the button press actions
     // console.log('timeoutButton = '+timeoutButton);

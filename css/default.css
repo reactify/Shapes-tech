@@ -81,7 +81,7 @@ a:active {
   border-color: yellow;
 }
 
-@media screen and (min-width:321px) {
+@media screen and (min-width:371px) {
   HTML {
     min-height: 821px;
     background: gray;
