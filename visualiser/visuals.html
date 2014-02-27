@@ -1,38 +1,158 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Dyanmics - Visualiser</title>
+	<title>Dynamics - Visualiser</title>
 
 	<script src="js/libs/three.js"></script>
+	<script src="js/libs/Tween.js"></script>
+	<script src="js/libs/dat.gui.min.js"></script>
 
+	<script src="js/retropi/utils/Polyfills.js"></script>
 	<script src="js/retropi/retropi.js"></script>
 	<script src="js/retropi/events/EventDispatcher.js"></script>
 	<script src="js/shapes-visualiser/ShapesSocketInterface.js"></script>
+	<script src="js/shapes-visualiser/threed/ThreedCameraController.js"></script>
+	<script src="js/shapes-visualiser/threed/ThreedSceneController.js"></script>
+	<script src="js/shapes-visualiser/threed/ThreedSceneManager.js"></script>
+	
+	<script src="js/shapes-visualiser/ShapesTestCubeScene.js"></script>
 
 	<script src="js/libs/socket.io.js"></script>
+
+	<style>
+
+		body, html {
+			background:black;
+		}
+
+	</style>
 
 	<script>
 
 	var socketInterface;
+	var sceneManager;
+	var cubeScene;
+
+	var gui;
+	var guiSettings = {
+		cameraX : 0,
+		cameraY : 0,
+		cameraZ : 400,
+		cameraWobbleAmp : 2
+	};
+	var lookAtVars = {
+		x: 0,
+		y: 0,
+		z: 0
+	};
+
 
 	document.addEventListener("DOMContentLoaded", function() {
 
 		var ShapesSocketInterface = retropi.getNamespace("shapes-visualiser").ShapesSocketInterface;
 
+		var ThreedSceneManager = retropi.getNamespace("shapes-visualiser.threed").ThreedSceneManager;
+
+		var ShapesTestCubeScene = retropi.getNamespace("shapes-visualiser").ShapesTestCubeScene;
+
+
 		socketInterface = new ShapesSocketInterface();
 		socketInterface.init();
-
 		socketInterface.addEventListener(ShapesSocketInterface.EVENT_BEAT, onBeat);
+		socketInterface.connect("http://yuli-mbp.home:8081/");
+		
+		sceneManager = new ThreedSceneManager();
+		sceneManager.init();
 
-		socketInterface.setup("http://yuli-mbp.home:8081/");
+		cubeScene = new ShapesTestCubeScene();
+		cubeScene.init();
+
+		sceneManager.addEventListener(ThreedSceneManager.NEW_SCENE_LOADED, onSceneLoaded);
+		sceneManager.loadScene(cubeScene);
+
+		document.body.appendChild(sceneManager.renderer.domElement);
+
+		document.body.addEventListener("click", function() {
+
+			cubeScene.onBeat();
+
+		});
+
+
+		setupGUI();
 
 	});
+
+	function onSceneLoaded(){
+
+		update();
+	};
 
 
 	function onBeat() {
 
+		cubeScene.onBeat();
+
 		console.log("BEAT!");
 
+	};
+
+	function setupGUI() {
+
+		var camera = cubeScene.camera;
+		var cameraController = cubeScene.cameraController;
+
+		gui = new dat.GUI();
+	
+		var cameraPosFolder = gui.addFolder("camera Position");
+
+		cameraPosFolder.add(guiSettings, 'cameraX', -100, 100, 1).onChange(function(value) {
+			camera.position.x = value;
+			
+		});
+
+		cameraPosFolder.add(guiSettings, 'cameraY', -1000, 1000, 100).onChange(function(value) {
+			camera.position.y = value;
+			
+		});
+
+		cameraPosFolder.add(guiSettings, 'cameraZ', -2000, 2000, 100).onChange(function(value) {
+			camera.position.z = value;
+			
+		});
+
+		cameraPosFolder.add(guiSettings, 'cameraWobbleAmp', 0, 100).onChange(function(value) {
+			cameraController.setWobble(value);
+		});
+
+		var lookAtFolder = gui.addFolder('cameraLookAt');
+
+
+		lookAtFolder.add(lookAtVars, 'x', -1000.0, 1000.0, 10).onChange(function(value) {
+			lookAtVars.x = value;
+			camera.lookAt(new THREE.Vector3(lookAtVars.x, lookAtVars.y, lookAtVars.z));
+		});
+
+		lookAtFolder.add(lookAtVars, 'y', -1000.0, 1000.0, 10).onChange(function(value) {
+			lookAtVars.y = value;
+			camera.lookAt(new THREE.Vector3(lookAtVars.x, lookAtVars.y, lookAtVars.z));
+		});
+
+		lookAtFolder.add(lookAtVars, 'z', -1000.0, 1000.0, 10).onChange(function(value) {
+			lookAtVars.z = value;
+			camera.lookAt(new THREE.Vector3(lookAtVars.x, lookAtVars.y, lookAtVars.z));
+		})
+
+	}
+
+
+	function update() {
+
+		TWEEN.update();
+
+		sceneManager.render();
+
+		requestAnimFrame(update);
 	};
 
 

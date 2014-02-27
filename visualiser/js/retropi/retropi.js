@@ -14,6 +14,19 @@
 		return namespaceObj;
 	};
 
+	retropi.getClass = function(aClassPath) {
+
+		var lastSplitPosition = aClassPath.lastIndexOf(".");
+		var packagePath = aClassPath.substring(0, lastSplitPosition);
+		var className = aClassPath.substring(lastSplitPosition+1, aClassPath.length);
+		
+		var packageObject = this.getNamespace(packagePath);
+		if(packageObject[className] === undefined) {
+			console.error("Class " + aClassPath + " doesn't exist.");
+			return null;
+		}
+		return packageObject[className];
+	};
 
 
 	retropi.createClass = function(aNamespace, aClassName, aInheritedClass, aDefinitionFunction){

@@ -19,24 +19,26 @@
 
 			this._socketBeatBound = this._onSocketBeat.bind(this);
 
+
+
+
 		}
 
-		p.setup = function(aClientIp){
+		p.connect = function(aClientIp) {
 
 			this._socket = io.connect(aClientIp);
 
-			this._socket.on('connect', this._onSocketConnectBound);
+			// this._socket.on('connect', this._onSocketConnectBound);
+			this._socket.on('beat', this._socketBeatBound);
 
-
-		}
-
+		};
 
 		p._onSocketConnect = function(aSocket){
 
 			console.log("ShapesSocketInterface :: on Connect!");
 
 
-			this._socket.on('beat', this._socketBeatBound);
+			
 
 		};
 
