@@ -14,6 +14,7 @@
       var clientName;
       var peerName;
       var totalButtonCount = 16;
+      var assignedButton;
       var sec = 0;
       var interactionLevel = 0;
       var progressbar
@@ -54,11 +55,17 @@
         $('#btn'+timeoutButton).unbind('vmousedown');;
         $('#btn'+timeoutButton).css({"color": "black"});
         $('#btn'+timeoutButton).fadeTo(0, 0, function() {
-          $('#btn'+timeoutButton).fadeTo(5000, 1, function() {
+        var fadeBackTo = 0.1;
+        if (timeoutButton == assignedButton) { fadeBackTo = 1.0 }
+          $('#btn'+timeoutButton).fadeTo(5000, fadeBackTo, function() {
             // When the fade back in is complete, rebind it to the button press actions
-            console.log('Rebinding');
+            // console.log('timeoutButton = '+timeoutButton);
+            // console.log('timeoutButton = '+assi);
             $('#btn'+timeoutButton).css({"color": "white"});
-            bindButtonToActions('#btn'+timeoutButton);
+            if (timeoutButton == assignedButton) {
+              console.log('Rebinding');
+              bindButtonToActions('#btn'+timeoutButton);
+            }
           });
         });
         console.log('Timing out '+timeoutButton);
@@ -76,12 +83,12 @@
             // console.log(users[i].assignedButtons);
             enableButtons(users[i].assignedButtons);
             labelButtons(users[i].userName, users[i].assignedButtons);
+            assignedButton = users[i].assignedButtons;
           }else{
             labelButtons(users[i].userName, users[i].assignedButtons);
           }
         }
         // console.log('Users = ' + users[0].userName);
-        // enableButtons
       })
 
       socket.on('updateLevel', function(level, name, timeLimit) {
