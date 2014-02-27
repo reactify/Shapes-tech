@@ -59,11 +59,13 @@
 
 			// var randomMaterial = new THREE.MeshBasicMaterial({
 			// 	wireframe : true,
-			// 	color : randomColor
+			// 	color: white;
+
 			// });
 
-			// this._cube.material = randomMaterial;
-
+			this._cube.material.color.setRGB(1, Math.random(), Math.random());
+			this._cube.material.needsUpdate = true;
+			this._cube.needsUpdate = true;
 
 		};
 
