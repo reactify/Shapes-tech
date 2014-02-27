@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dyanmics - Visualiser</title>
+
+	<script src="js/libs/three.js"></script>
+
+	<script src="js/retropi/retropi.js"></script>
+	<script src="js/retropi/events/EventDispatcher.js"></script>
+	<script src="js/shapes-visualiser/ShapesSocketInterface.js"></script>
+
+	<script src="js/libs/socket.io.js"></script>
+
+	<script>
+
+	var socketInterface;
+
+	document.addEventListener("DOMContentLoaded", function() {
+
+		var ShapesSocketInterface = retropi.getNamespace("shapes-visualiser").ShapesSocketInterface;
+
+		socketInterface = new ShapesSocketInterface();
+		socketInterface.init();
+
+		socketInterface.addEventListener(ShapesSocketInterface.EVENT_BEAT, onBeat);
+
+		socketInterface.setup("http://yuli-mbp.home:8081/");
+
+	});
+
+
+	function onBeat() {
+
+		console.log("BEAT!");
+
+	};
+
+
+	</script>
+
+</head>
+<body>
+
+</body>
+</html>
