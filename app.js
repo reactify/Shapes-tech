@@ -57,6 +57,7 @@ sock = dgram.createSocket("udp4", function(msg, rinfo) {
   if (oscIn.address == "/beat") {
     var oscInArgs = oscIn.args;
     var oscInValue = oscInArgs[0].value;
+    io.sockets.emit('beat', oscInValue);
     // console.log("Beat "+oscInValue);
   }else{
     console.log(oscIn.address);
@@ -165,7 +166,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('registerAsDisplay', function(id) {
     console.log('Display registered');
     display = socket.id;
-  })
+  });
 
   socket.on('didAccelerate', function(tilt) {
     // console.log('Acceleration: '+tilt);
