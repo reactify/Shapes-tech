@@ -31,7 +31,7 @@ var file = new(static.Server)();
 
 http.createServer(function (req, res) {
   file.serve(req, res);
-}).listen(8080);
+}).listen(8000);
 
 var io = require('socket.io').listen(8081);
 
@@ -40,16 +40,22 @@ io.set("log level", 1); // reduce logging
 
 function sendOSC(oscAddress, state) {
   var buf;
-  if (oscAddress != undefined) {
+  if (oscAddress !== undefined) {
     var address = "/" + oscAddress;
     buf = osc.toBuffer({
       address: address,
       args: [state]
-    })
+    });
     // console.log(address, state);
     return udp.send(buf, 0, buf.length, outport, "localhost");
-  };
-};
+  }
+}
+
+sock = dgram.createSocket("udp4", function(msg, rinfo) {
+  console.log(msg, rinfo);
+});
+
+sock.bind(9001);
 
 var usernames = {};
 var usernames2 = [];
@@ -204,7 +210,7 @@ io.sockets.on('connection', function (socket) {
     }else{
       console.log('Already at the top level');
     }
-  })
+  });
 
   // when the user disconnects.. perform this
   // TO-DO // TIDY THIS UP. LOTS OF IDENTICAL/REDUNTANT CALLS TO .connect ABOVE
@@ -240,5 +246,4 @@ io.sockets.on('connection', function (socket) {
     
     io.sockets.socket(display).emit('userCountUpdated', usersCount);
   });
-
 });
