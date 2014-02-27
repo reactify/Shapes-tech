@@ -13,7 +13,7 @@
     <script>
       var clientName;
       var peerName;
-      var totalButtonCount = 4;
+      var totalButtonCount = 16;
       var sec = 0;
       var interactionLevel = 0;
       var progressbar
@@ -21,7 +21,7 @@
       var secondsUnwrapped = 0;
       var sendAccelerometer = 0;
 
-      var socket = io.connect('http://yuli-mbp.lan:8081');
+      var socket = io.connect('http://yuli-mbp.home:8081');
       // var socket = io.connect('http://localhost:8081');
       socket.on('news', function (data) {
         // console.log(data);
@@ -66,13 +66,14 @@
 
       socket.on('assignButtons', function(users) {
         for (var i=0; i < totalButtonCount; i++) {
-          // var buttonToDisable = "#btn"+i;
-          // $(buttonToDisable).unbind();
-          // $(buttonToDisable).css({"opacity": "0.5"});
+          var buttonToDisable = "#btn"+i;
+          $(buttonToDisable).unbind();
+          $(buttonToDisable).css({"opacity": "0.1"});
         }
 
         for (var i=0; i < users.length; i++) {
           if (users[i].userName == clientName) {
+            // console.log(users[i].assignedButtons);
             enableButtons(users[i].assignedButtons);
             labelButtons(users[i].userName, users[i].assignedButtons);
           }else{
@@ -93,28 +94,24 @@
       })
 
       function labelButtons (name, buttonsToLabel) {
-        for (var i=0; i < buttonsToLabel.length; i++) {
-          // console.log('Labelling button ' + buttonsToLabel[i] + ' with ' + name);
-          var buttonToLabel = "#btn"+buttonsToLabel[i];
-          $(buttonToLabel).text(name);
-        }
+        // console.log('Labelling button ' + buttonsToLabel[i] + ' with ' + name);
+        var buttonToLabel = "#btn"+buttonsToLabel;
+        $(buttonToLabel).text(name);
       }
 
       function enableButtons (enableButtons) {
-        // for (var i=0; i < enableButtons.length; i++) {
+        console.log('Enabling button ' + enableButtons);
+        var buttonToEnable = "#btn"+enableButtons;
+        $(buttonToEnable).css({"opacity": "1.0"});
+        bindButtonToActions(buttonToEnable);
+
+        // hack to assign all buttons by default
+        // for (var i=0; i < 16; i++) {
         //   // console.log('Enabling button ' + enableButtons[i]);
-        //   var buttonToEnable = "#btn"+enableButtons[i];
+        //   var buttonToEnable = "#btn"+i;
         //   $(buttonToEnable).css({"opacity": "1.0"});
         //   bindButtonToActions(buttonToEnable);
         // }
-
-        // hack to assign all buttons by default
-        for (var i=0; i < 16; i++) {
-          // console.log('Enabling button ' + enableButtons[i]);
-          var buttonToEnable = "#btn"+i;
-          $(buttonToEnable).css({"opacity": "1.0"});
-          bindButtonToActions(buttonToEnable);
-        }
       }
 
       function bindButtonToActions(buttonToBind) {
@@ -220,21 +217,21 @@
     <div id="interactionLevelName"></div>
     <progress id="progressbar" value="0" max="5"></progress>
     </br>
-    <div id="btn0" class="btn" buttonIndex="0">Player 0</div>
-    <div id="btn1" class="btn" buttonIndex="1">Player 0</div>
-    <div id="btn2" class="btn" buttonIndex="2">Player 0</div>
-    <div id="btn3" class="btn" buttonIndex="3">Player 0</div>
-    <div id="btn4" class="btn" buttonIndex="4">Player 0</div>
-    <div id="btn5" class="btn" buttonIndex="5">Player 0</div>
-    <div id="btn6" class="btn" buttonIndex="6">Player 0</div>
-    <div id="btn7" class="btn" buttonIndex="7">Player 0</div>
-    <div id="btn8" class="btn" buttonIndex="8">Player 0</div>
-    <div id="btn9" class="btn" buttonIndex="9">Player 0</div>
-    <div id="btn10" class="btn" buttonIndex="10">Player 0</div>
-    <div id="btn11" class="btn" buttonIndex="11">Player 0</div>
-    <div id="btn12" class="btn" buttonIndex="12">Player 0</div>
-    <div id="btn13" class="btn" buttonIndex="13">Player 0</div>
-    <div id="btn14" class="btn" buttonIndex="14">Player 0</div>
-    <div id="btn15" class="btn" buttonIndex="15">Player 0</div>
+    <div id="btn0" class="btn" buttonIndex="0"></div>
+    <div id="btn1" class="btn" buttonIndex="1"></div>
+    <div id="btn2" class="btn" buttonIndex="2"></div>
+    <div id="btn3" class="btn" buttonIndex="3"></div>
+    <div id="btn4" class="btn" buttonIndex="4"></div>
+    <div id="btn5" class="btn" buttonIndex="5"></div>
+    <div id="btn6" class="btn" buttonIndex="6"></div>
+    <div id="btn7" class="btn" buttonIndex="7"></div>
+    <div id="btn8" class="btn" buttonIndex="8"></div>
+    <div id="btn9" class="btn" buttonIndex="9"></div>
+    <div id="btn10" class="btn" buttonIndex="10"></div>
+    <div id="btn11" class="btn" buttonIndex="11"></div>
+    <div id="btn12" class="btn" buttonIndex="12"></div>
+    <div id="btn13" class="btn" buttonIndex="13"></div>
+    <div id="btn14" class="btn" buttonIndex="14"></div>
+    <div id="btn15" class="btn" buttonIndex="15"></div>
   </body>
 </html>

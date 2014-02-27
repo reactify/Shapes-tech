@@ -53,10 +53,11 @@ function sendOSC(oscAddress, state) {
 
 sock = dgram.createSocket("udp4", function(msg, rinfo) {
   var oscIn = osc.fromBuffer(msg);
+  // Receive beats in from Live via OSC
   if (oscIn.address == "/beat") {
     var oscInArgs = oscIn.args;
     var oscInValue = oscInArgs[0].value;
-    console.log("Beat "+oscInValue);
+    // console.log("Beat "+oscInValue);
   }else{
     console.log(oscIn.address);
   }
@@ -132,11 +133,11 @@ io.sockets.on('connection', function (socket) {
     // recalculate number of users
     usersCount = Object.size(usernames);
 
-    if (usersCount == 5) {
+    if (usersCount == 16) {
       console.log('Removing a user');
-      usernames2.splice(3, 1)
-      delete usernames[socket.username]; 
-      usersCount = Object.size(usernames);  
+      usernames2.splice(3, 1);
+      delete usernames[socket.username];
+      usersCount = Object.size(usernames);
     }
 
     // recalculate the distribution of buttons across users based on number of connected users
@@ -144,7 +145,8 @@ io.sockets.on('connection', function (socket) {
 
     // assign each connected user their buttons
     for (i=0; i < usersCount; i++) {
-      usernames2[i].assignedButtons = sortedButtons[i];
+      // usernames2[i].assignedButtons = sortedButtons[i];
+      usernames2[i].assignedButtons = i;
       // console.log('assigning user');
       // console.log(usernames2[i].userName);
       // console.log('these buttons');
@@ -188,7 +190,7 @@ io.sockets.on('connection', function (socket) {
         // sendOSC(sendOSC("button-on", parseInt(buttonIndex)));
         midiOutput.sendMessage([187, parseInt(buttonIndex), 127]);
         io.sockets.emit('peerButtonPressed', buttonIndex);
-        // io.sockets.emit('timeoutButton', buttonIndex);
+        io.sockets.emit('timeoutButton', buttonIndex);
       }
     }
   });
@@ -242,8 +244,10 @@ io.sockets.on('connection', function (socket) {
 
     // assign each connected user their buttons
     for (i=0; i < usersCount; i++) {
-      usernames2[i].assignedButtons = sortedButtons[i];
-      console.log('assigning user ' + usernames2[i] + ' these buttons ' + sortedButtons[usersCount-1]);
+      // usernames2[i].assignedButtons = sortedButtons[i];
+      usernames2[i].assignedButtons = i;
+      // console.log('assigning user ' + usernames2[i] + ' these buttons ' + sortedButtons[usersCount-1]);
+      console.log('assigning user ' + usernames2[i] + ' these buttons ' + i);
     }
 
     // tell client to update its view
