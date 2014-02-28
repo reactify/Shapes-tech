@@ -72,7 +72,7 @@
 		p._tendToValue = function(aValue, aTowardsValue) {
 			var diff = aValue - aTowardsValue;
 
-			return aValue - (diff * 0.5);
+			return aValue - (diff * 0.1);
 		};
 
 
